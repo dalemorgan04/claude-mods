@@ -3,6 +3,7 @@
   "owner": { "name": "Dale Morgan" },
   "description": "Personal Claude Code mods",
   "plugins": [
-    { "name": "message-cost", "source": "./message-cost", "description": "Usage and cost panel above the prompt" }
+    { "name": "message-cost", "source": "./message-cost", "description": "Usage and cost panel above the prompt" },
+    { "name": "model-routing", "source": "./model-routing", "description": "Skill and Haiku search agent for token-efficient model routing" }
   ]
 }

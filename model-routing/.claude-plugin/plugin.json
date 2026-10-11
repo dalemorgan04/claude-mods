@@ -1,0 +1,6 @@
+{
+  "name": "model-routing",
+  "version": "0.1.0",
+  "description": "Token-efficient model routing: Opus plans, Haiku explores, Sonnet implements",
+  "author": { "name": "Dale Morgan" }
+}
