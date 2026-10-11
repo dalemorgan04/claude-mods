@@ -99,6 +99,15 @@ const weeklyPace = (week: number | null, resetsAt: string | null, nowMs: number)
   return week / Math.max(elapsed, 1)
 }
 
+// Where the week's usage should stand by the end of today if the allowance
+// were spent evenly: today's day number (1 to 7) over seven, as a percentage.
+const weeklyTarget = (resetsAt: string | null, nowMs: number) => {
+  if (resetsAt === null || Date.parse(resetsAt) <= nowMs) return null
+  const day = 7 - Math.min(Math.max(daysLeftInWeek(resetsAt, nowMs), 1), 7) + 1
+
+  return (day / 7) * 100
+}
+
 const addTurn = (current: Chat, one: Pick<Turn, 'usd' | 'tokens' | 'sessionPct' | 'weekPct'>): Chat => ({
   turns: current.turns + 1,
   usd: current.usd + (one.usd ?? 0),
@@ -253,6 +262,10 @@ export const register: Register = on => {
     )
 
     const perDay = weeklyPerDay(now.week, now.weekResetsAt, nowMs)
+    const target = weeklyTarget(now.weekResetsAt, nowMs)
+    // Green while the week is under the target, red once it is over.
+    const targetColor = target === null || now.week === null ? undefined : now.week > target ? 'error' : 'success'
+    const targetLeft = target === null || now.week === null ? null : target - now.week
     const pace = weeklyPace(now.week, now.weekResetsAt, nowMs)
     // Red when the per-day ceiling has fallen below the pace the week has run at.
     const perDayColor = perDay === null || pace === null ? undefined : perDay < pace ? 'error' : 'success'
@@ -264,7 +277,10 @@ export const register: Register = on => {
           <Text bold color={usedColor(now.session)}>{pct(now.session)}</Text>
           <Text dimColor>  ·  Week </Text>
           <Text bold color={usedColor(now.week)}>{pct(now.week)}</Text>
-          <Text bold color={perDayColor}>{perDay === null ? '' : ` (${perDay.toFixed(0)}%)`}</Text>
+          <Text bold>{perDay === null ? '' : ' ('}</Text>
+          <Text bold color={targetColor}>{perDay === null ? '' : `target: ${target === null ? 'n/a' : `${target.toFixed(0)}%`}`}</Text>
+          <Text bold color={perDayColor}>{perDay === null ? '' : `, ${perDay.toFixed(0)}% per day`}</Text>
+          <Text bold>{perDay === null ? '' : ')'}</Text>
           <Text dimColor>  ·  Last </Text>
           <Text bold>{last?.usd == null ? 'n/a' : money(last.usd)}</Text>
           <Text dimColor>{last ? ` (${pct2(last.sessionPct)} / ${pct2(last.weekPct)})` : ''}</Text>
@@ -278,6 +294,8 @@ export const register: Register = on => {
     const burn = sessionShare === null || hours < MIN_BURN_HOURS ? null : sessionShare / hours
 
     const sessionRows: Row[] = [
+      ['Target', target === null ? 'n/a' : `${target.toFixed(0)}%`, targetColor],
+      ['% left', targetLeft === null ? 'n/a' : `${targetLeft.toFixed(0)}%`, targetColor],
       ['5h used', pct(now.session), usedColor(now.session)],
       ['Weekly', pct(now.week), usedColor(now.week)],
       ['Spent', now.usd === null ? 'n/a' : money(now.usd)],
