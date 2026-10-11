@@ -1,0 +1,8 @@
+{
+  "name": "claude-mods",
+  "owner": { "name": "Dale Morgan" },
+  "description": "Personal Claude Code mods",
+  "plugins": [
+    { "name": "message-cost", "source": "./message-cost", "description": "Usage and cost panel above the prompt" }
+  ]
+}
