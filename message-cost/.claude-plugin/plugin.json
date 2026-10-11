@@ -1,0 +1,7 @@
+{
+  "name": "message-cost",
+  "version": "0.1.0",
+  "description": "Shows what each chat message cost, beneath its answer, with a running session total in the status line.",
+  "author": { "name": "Dale Morgan" },
+  "types": "./types/index.d.ts"
+}

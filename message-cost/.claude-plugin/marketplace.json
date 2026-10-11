@@ -1,0 +1,6 @@
+{
+  "name": "dale-mods",
+  "description": "Personal Claude Code mods for Dale Morgan.",
+  "owner": { "name": "Dale Morgan" },
+  "plugins": [{ "name": "message-cost", "source": "./" }]
+}
